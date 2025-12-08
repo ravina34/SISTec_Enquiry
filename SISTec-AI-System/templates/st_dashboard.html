@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTec Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chat-container {
+            height: calc(100vh - 8rem); 
+        }
+        .message-bubble {
+            max-width: 80%;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .user-bubble {
+            background-color: #2563eb; 
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .bot-bubble {
+            background-color: #e5e7eb; 
+            color: #1f2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    
+    <header class="bg-white shadow-md p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10">
+        <h1 class="text-xl font-bold text-gray-800">SISTec AI Assistant</h1>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm font-medium text-gray-600">Welcome, <span id="userName" class="font-bold text-indigo-600">{{ user_name }}</span></span>
+            <button id="logoutButton" class="px-3 py-1 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition duration-150">Logout</button>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-20 pb-20 p-4 overflow-hidden">
+        <div id="chatHistory" class="chat-container overflow-y-auto space-y-4">
+            <!-- Initial Bot Message -->
+             <div class="flex justify-start">
+                <div class="message-bubble bot-bubble">
+                    Hello <span class="font-semibold">{{ user_name }}</span>! I am your SISTec AI Assistant, powered by Google Gemini. How can I help you today?
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white shadow-t-lg p-4 fixed bottom-0 left-0 right-0 z-10 border-t border-gray-200">
+        <form id="chatForm" class="flex space-x-3 max-w-4xl mx-auto">
+            <input type="text" id="userInput" placeholder="Ask a question about SISTec, courses, fees, etc..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" autocomplete="off">
+            <button type="submit" id="sendButton" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 flex items-center justify-center disabled:opacity-50" disabled>
+                Send
+                <svg id="sendIcon" class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                <svg id="loadingIcon" class="animate-spin h-5 w-5 ml-1 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatForm = document.getElementById('chatForm');
+            const userInput = document.getElementById('userInput');
+            const chatHistory = document.getElementById('chatHistory');
+            const logoutButton = document.getElementById('logoutButton');
+            const sendButton = document.getElementById('sendButton');
+            const sendIcon = document.getElementById('sendIcon');
+            const loadingIcon = document.getElementById('loadingIcon');
+
+            userInput.addEventListener('input', () => {
+                sendButton.disabled = userInput.value.trim() === '';
+            });
+
+            sendButton.disabled = userInput.value.trim() === '';
+
+
+            // Function to render Markdown (simplified)
+            function renderMarkdown(text) {
+                // Split text to handle code blocks first (though simple string replacement is used here)
+                let html = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>') 
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline break-all">$1</a>') 
+                    .replace(/\n/g, '<br>'); 
+                
+                // For a more robust solution, a proper markdown library should be used, but this suffices for basic formatting.
+                return html;
+            }
+
+            // Function to add a message to the chat history
+            function addMessage(sender, text) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = `message-bubble ${sender === 'user' ? 'user-bubble' : 'bot-bubble'}`;
+                bubble.innerHTML = renderMarkdown(text); 
+                
+                messageElement.appendChild(bubble);
+                chatHistory.appendChild(messageElement);
+                
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+
+            // Chat submission handler
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const query = userInput.value.trim();
+
+                if (query === '') return;
+
+                addMessage('user', query);
+                userInput.value = '';
+
+                // Show loading state
+                sendButton.disabled = true;
+                sendIcon.classList.add('hidden');
+                loadingIcon.classList.remove('hidden');
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ query: query })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        addMessage('bot', result.response);
+                    } else if (response.status === 401) {
+                         // Session expired
+                        addMessage('bot', 'Session expired. Please log in again.');
+                        setTimeout(() => window.location.href = '/login', 2000);
+                    } else {
+                        addMessage('bot', result.response || "An error occurred while fetching the response.");
+                    }
+
+                } catch (error) {
+                    console.error('Fetch Error:', error);
+                    addMessage('bot', 'Network connection error. Could not reach the server.');
+                } finally {
+                    // Hide loading state and re-enable button (check input value)
+                    sendIcon.classList.remove('hidden');
+                    loadingIcon.classList.add('hidden');
+                    sendButton.disabled = userInput.value.trim() === '';
+                }
+            });
+
+            // Logout handler
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/logout', {
+                        method: 'POST'
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/login'; 
+                    } else {
+                        alert("Logout failed. Please try again.");
+                    }
+                } catch (error) {
+                    console.error('Logout Error:', error);
+                    alert("A network error occurred during logout.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

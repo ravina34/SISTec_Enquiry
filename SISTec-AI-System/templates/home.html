@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTec AI System - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; 
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-xl card-shadow p-8 sm:p-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">SISTec AI Guidance System</h1>
+            <p class="text-gray-500 text-lg">Welcome to your personalized institutional assistant.</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Student Portal Card -->
+            <a href="/login" class="block">
+                <div class="bg-indigo-600 hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-[1.02] rounded-xl p-8 text-white card-shadow h-full flex flex-col justify-between">
+                    <div>
+                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M12 20h.01m-10.7 2H3.7M21.3 22h-1.3l-2.7-5.4M12 15a4 4 0 100-8 4 4 0 000 8zm0 0v-2.25M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2m-8 0v2.25M18 18h2a2 2 0 002-2v-4a2 2 0 00-2-2H4a2 2 0 00-2 2v4a2 2 0 002 2h2"></path></svg>
+                        <h2 class="text-2xl font-bold mb-2">Student Portal</h2>
+                        <p class="text-indigo-200">Access your personalized chatbot, academic information, and support resources.</p>
+                    </div>
+                    <div class="mt-6">
+                        <span class="inline-flex items-center text-sm font-semibold border-b-2 border-white pb-0.5">
+                            Go to Student Login &rarr;
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Admin Portal Card -->
+            <a href="/admin/login" class="block">
+                <div class="bg-gray-700 hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-[1.02] rounded-xl p-8 text-white card-shadow h-full flex flex-col justify-between">
+                    <div>
+                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-1.75-3M3 13h18M7 17h10M7 7h10M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>
+                        <h2 class="text-2xl font-bold mb-2">Admin Portal</h2>
+                        <p class="text-gray-300">Manage user data, monitor system performance, and access administrative tools.</p>
+                    </div>
+                    <div class="mt-6">
+                        <span class="inline-flex items-center text-sm font-semibold border-b-2 border-white pb-0.5">
+                            Go to Admin Login &rarr;
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </main>
+
+        <footer class="mt-12 text-center text-gray-400 text-sm">
+            &copy; 2024 SISTec AI System.
+        </footer>
+    </div>
+</body>
+</html>
